@@ -7,10 +7,40 @@ Grid<bool> floodedRegionsIn(const Grid<double>& terrain,
                             const Vector<GridLocation>& sources,
                             double height) {
     /* TODO: Delete this line and the next four lines, then implement this function. */
-    (void) terrain;
-    (void) sources;
-    (void) height;
-    return {};
+    // (void) terrain;
+    // (void) sources;
+    // (void) height;
+    Queue<GridLocation> q;
+    int n = terrain.numRows();
+    int m = terrain.numCols();
+    Grid<bool> ans(n, m, 0);
+    const int dx[4] = {1, -1, 0, 0};
+    const int dy[4] = {0, 0, 1, -1};
+    if (sources.isEmpty()) {
+        return ans;
+    }
+    for (GridLocation k : sources) {
+        if (terrain[k.row][k.col] <= height) {
+            q.enqueue(k);
+            ans[k.row][k.col] = 1;
+        }
+    }
+    while (!q.isEmpty()) {
+        GridLocation s = q.dequeue();
+        for (int i = 0; i < 4; i++) {
+            GridLocation e;
+            e.row = s.row + dx[i];
+            e.col = s.col + dy[i];
+            if (e.row < 0 || e.row >= n || e.col < 0 || e.col >= m || ans[e.row][e.col] == 1) {
+                continue;
+            }
+            if (terrain[e.row][e.col] <= height) {
+                q.enqueue(e);
+                ans[e.row][e.col] = 1;
+            }
+        }
+    }
+    return ans;
 }
 
 
