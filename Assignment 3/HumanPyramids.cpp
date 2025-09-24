@@ -1,18 +1,68 @@
 #include "HumanPyramids.h"
+#include "error.h"
+#include "grid.h"
 using namespace std;
 
 /* TODO: Refer to HumanPyramids.h for more information about what this function should do.
  * Then, delete this comment.
  */
-double weightOnBackOf(int row, int col, int pyramidHeight) {
+
+//first
+// double weightOnBackOf(int row, int col, int pyramidHeight) {
+//     /* TODO: Delete the next few lines and implement this function. */
+//     // (void) row;
+//     // (void) col;
+//     // (void) pyramidHeight;
+//     // return 0;
+//     if (row > pyramidHeight - 1 || row < col) {
+//         error("out of bounds");
+//     }
+//     if (col == 0 && row == 0) {
+//         return 0;
+//     }
+//     if (col == 0) {
+//         return weightOnBackOf(row - 1, col, pyramidHeight) / 2 + 80;
+//     }
+//     if (col == row) {
+//         return weightOnBackOf(row - 1, col - 1, pyramidHeight) / 2 + 80;
+//     }
+//     return (weightOnBackOf(row - 1, col - 1, pyramidHeight) + weightOnBackOf(row - 1, col, pyramidHeight)) / 2 + 160;
+// }
+
+//second
+double weight(int row, int col, Grid<double>& mp) {
     /* TODO: Delete the next few lines and implement this function. */
-    (void) row;
-    (void) col;
-    (void) pyramidHeight;
-    return 0;
+    // (void) row;
+    // (void) col;
+    // (void) pyramidHeight;
+    // return 0;
+    if (mp[row][col] != -1) {
+        return mp[row][col];
+    }
+    if (col == 0 && row == 0) {
+        return mp[row][col] = 0;
+    }
+    if (col == 0) {
+        return mp[row][col] = weight(row - 1, col, mp) / 2 + 80;
+    }
+    if (col == row) {
+        return mp[row][col] = weight(row - 1, col - 1, mp) / 2 + 80;
+    }
+    return mp[row][col] = (weight(row - 1, col - 1, mp) + weight(row - 1, col, mp)) / 2 + 160;
 }
 
-
+double weightOnBackOf(int row, int col, int pyramidHeight) {
+    /* TODO: Delete the next few lines and implement this function. */
+    // (void) row;
+    // (void) col;
+    // (void) pyramidHeight;
+    // return 0;
+    if (row > pyramidHeight - 1 || row < col) {
+        error("out of bounds");
+    }
+    Grid<double> mp(pyramidHeight, pyramidHeight, -1);
+    return weight(row, col, mp);
+}
 
 
 
@@ -55,7 +105,7 @@ PROVIDED_TEST("Stress test: Memoization is implemented (should take under a seco
      * line immediately after this one - the one that starts with SHOW_ERROR - once
      * you have implemented memoization to test whether it works correctly.
      */
-    SHOW_ERROR("This test is configured to always fail until you delete this line from\n         HumanPyramids.cpp. Once you have implemented memoization and want\n         to check whether it works correctly, remove the indicated line.");
+    //SHOW_ERROR("This test is configured to always fail until you delete this line from\n         HumanPyramids.cpp. Once you have implemented memoization and want\n         to check whether it works correctly, remove the indicated line.");
 
     /* Do not delete anything below this point. :-) */
 

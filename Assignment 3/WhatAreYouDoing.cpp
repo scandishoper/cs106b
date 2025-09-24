@@ -1,4 +1,6 @@
 #include "WhatAreYouDoing.h"
+#include <cctype>
+#include "strlib.h"
 using namespace std;
 
 /* TODO: Read the comments in WhatAreYouDoing.h to see what this function needs to do, then
@@ -7,10 +9,48 @@ using namespace std;
  * Don't forget about the tokenize function defined in WhatAreYouDoing.h; you'll almost
  * certainly want to use it.
  */
+
+
+//DFS
+Set<string> allEmp(const Vector<string>& token, string& s, int num) {
+    Set<string> ans;
+    if (num == token.size()) {
+        ans.add(s);
+        return ans;
+    }
+    while (num < token.size() && !isalpha(token.get(num)[0])) {
+        s += token.get(num);
+        num++;
+    }
+    if (num == token.size()) {
+        ans.add(s);
+        return ans;
+    }
+    for (int i = 0; i <= 1; i++) {
+        if (!i) {
+            string tmp = s + token.get(num);
+            ans += allEmp(token, tmp, num + 1);
+        }
+        else {
+            string tmp = s + toUpperCase(token.get(num));
+            ans += allEmp(token, tmp, num + 1);
+        }
+    }
+    return ans;
+}
+
 Set<string> allEmphasesOf(const string& sentence) {
     /* TODO: Delete this line and the next one, then implement this function. */
-    (void) sentence;
-    return {};
+    // (void) sentence;
+    // return {};
+    Vector<string> token = tokenize(sentence);
+    for (string& s : token) {
+        if (isalpha(s[0])) {
+            s = toLowerCase(s);
+        }
+    }
+    string x = "";
+    return allEmp(token, x, 0);
 }
 
 /* * * * * * Test Cases * * * * * */

@@ -4,11 +4,62 @@ using namespace std;
 /* TODO: Refer to ShiftScheduling.h for more information about what this function should do.
  * Then, delete this comment and replace it with one of your own.
  */
+
+Set<Shift> dfs(const Set<Shift>& use, const Set<Shift>& ans, int h) {
+    if (use.size() == 0) {
+        return ans;
+    }
+    Shift tmp = use.first();
+    Set<Shift> used = use - tmp, ansed = ans + tmp;
+    double sum = 0;
+    bool f = 0;
+    for (auto i : ansed) {
+        sum += lengthOf(i);
+    }
+    if (sum > h) {
+        f = 1;
+    }
+    for (auto i : ans) {
+        if (overlapsWith(i, tmp)){
+            f = 1;
+            break;
+        }
+    }
+    if (!f) {
+        auto a = dfs(used, ansed, h);
+        auto b = dfs(used, ans, h);
+        int suma = 0, sumb = 0;
+        for (auto p : a) {
+            suma += valueOf(p);
+        }
+        for (auto p : b) {
+            sumb += valueOf(p);
+        }
+        if (suma >= sumb) return a;
+        else return b;
+    }
+    else {
+        return dfs(used, ans, h);
+    }
+}
+
 Set<Shift> highestValueScheduleFor(const Set<Shift>& shifts, int maxHours) {
     /* TODO: Delete the next few lines and implement this function. */
-    (void) shifts;
-    (void) maxHours;
-    return {};
+    // (void) shifts;
+    // (void) maxHours;
+    // return {};
+
+    // int lengthOf(const Shift& shift);    // Returns the length of a shift.
+    // int valueOf(const Shift& shift);     // Returns the value of this shift.
+    // bool overlapsWith(const Shift& one,  // Returns whether two shifts overlap.
+    //                   const Shift& two);
+
+    if (maxHours < 0) {
+        error("maxhours must be positive.");
+    }
+    else if (maxHours == 0) return {};
+    Set<Shift> ans = dfs(shifts, {}, maxHours);
+    return ans;
 }
 
 
