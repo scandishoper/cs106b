@@ -1,18 +1,128 @@
 #include "Matchmaker.h"
 using namespace std;
 
-bool hasPerfectMatching(const Map<string, Set<string>>& possibleLinks, Set<Pair>& matching) {
-    /* TODO: Delete this comment and these remaining lines, then implement this function. */
-    (void) possibleLinks;
-    (void) matching;
+// bool hasPerfectMatching(const Map<string, Set<string>>& possibleLinks, Set<Pair>& matching) {
+//     /* TODO: Delete this comment and these remaining lines, then implement this function. */
+//     // (void) possibleLinks;
+//     // (void) matching;
+//     // return false;
+//     if (possibleLinks.isEmpty()) {
+//         return 1;
+//     }
+//     string s1 = possibleLinks.firstKey();
+//     for (string s2 : possibleLinks[s1]) {
+//         bool f = 0;
+//         for (auto p : matching) {
+//             if (p.first() == s2 || p.second() == s2) {
+//                 f = 1;
+//                 break;
+//             }
+//         }
+//         if (!f) {
+//             Pair now = {s1, s2};
+//             Set<Pair> pd = matching;
+//             pd.add(now);
+//             auto links = possibleLinks;
+//             links.remove(s1);
+//             links.remove(s2);
+//             if (hasPerfectMatching(links, pd)) {
+//                 matching += pd;
+//                 return 1;
+//             }
+//         }
+//     }
+//     return 0;
+// }
+
+
+bool dfs(const Map<string, Set<string>>& possibleLinks,
+                    Set<string>& unmatched,
+                    Set<Pair>& matching) {
+    if (unmatched.isEmpty()) {
+        return true;
+    }
+    string person = *unmatched.begin();
+
+    const Set<string>& candidates = possibleLinks.get(person);
+    if (candidates.isEmpty()) return false;
+
+    for (const string& other : candidates) {
+        if (!unmatched.contains(other)) continue;
+        if (other < person) continue;
+
+        unmatched.remove(person);
+        unmatched.remove(other);
+        matching.add(Pair(person, other));
+        if (dfs(possibleLinks, unmatched, matching)) {
+            return true;
+        }
+
+        matching.remove(Pair(person, other));
+        unmatched.add(person);
+        unmatched.add(other);
+    }
     return false;
 }
 
-Set<Pair> maximumWeightMatching(const Map<string, Map<string, int>>& possibleLinks) {
-    /* TODO: Delete this comment and these remaining lines, then implement this function. */
-    (void) possibleLinks;
-    return { };
+bool hasPerfectMatching(const Map<string, Set<string>>& possibleLinks,
+                        Set<Pair>& matching) {
+    // Set<string> unmatched = possibleLinks.keys();
+    Set<string> unmatched;
+    for (string key : possibleLinks.keys()) {
+        unmatched.add(key);
+    }
+    return dfs(possibleLinks, unmatched, matching);
 }
+
+void dfsmax(const Map<string, Map<string, int>>& possibleLinks,
+            Set<string>& use,
+            Set<Pair>& ans,
+            Set<Pair>& res,
+            int sum,
+            int& mx) {
+    if (use.isEmpty()) {
+        if (sum > mx) {
+            mx = sum;
+            ans = res;
+        }
+        return;
+    }
+
+    string person = *use.begin();
+    use.remove(person);
+
+    for (string other : possibleLinks[person].keys()) {
+        if (use.contains(other)) {
+            use.remove(other);
+
+            res.add(Pair(person, other));
+            int w = possibleLinks[person][other];
+
+            dfsmax(possibleLinks, use, ans, res, sum + w, mx);
+
+            res.remove(Pair(person, other));
+            use.add(other);
+        }
+    }
+    dfsmax(possibleLinks, use, ans, res, sum, mx);
+    use.add(person);
+}
+
+Set<Pair> maximumWeightMatching(const Map<string, Map<string, int>>& possibleLinks) {
+
+    Set<Pair> ans, res;
+    int mx = 0;
+    int sum = 0;
+
+    Set<string> use;
+    for (string key : possibleLinks.keys()) {
+        use.add(key);
+    }
+
+    dfsmax(possibleLinks, use, ans, res, sum, mx);
+    return ans;
+}
+
 
 /* * * * * Test Cases Below This Point * * * * */
 

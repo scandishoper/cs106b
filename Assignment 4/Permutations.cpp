@@ -38,7 +38,7 @@ Set<string> permutationsRec(string str, string chosen) {
             /* Find all permutations we can make with this choice and add them into
              * the result.
              */
-            Set<string> thisOption = permutationsRec(remaining, chosen += ch);
+            Set<string> thisOption = permutationsRec(remaining, chosen + ch);
             result += thisOption;
         }
 

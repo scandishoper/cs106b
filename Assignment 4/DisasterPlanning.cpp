@@ -4,14 +4,71 @@ using namespace std;
 /* TODO: Refer to DisasterPlanning.h for more information about this function.
  * Then, delete this comment.
  */
+
+
+bool dfs(const Map<string, Set<string>>& roadNetwork,
+         int numCities,
+         Set<string> use,
+         Set<string> res,
+         Set<string>& supplyLocations)
+{
+    if (res.size() > numCities) return false;
+    if (use.isEmpty()) {
+        supplyLocations = res;
+        return true;
+    }
+
+    string pos = *use.begin();
+
+    /* Case 1*/
+    {
+        Set<string> use2 = use;
+        Set<string> res2 = res;
+
+        res2.add(pos);
+        use2.remove(pos);
+        use2 -= roadNetwork[pos];
+
+        if (dfs(roadNetwork, numCities, use2, res2, supplyLocations))
+            return true;
+    }
+
+    /* Case 2*/
+    for (string other : roadNetwork[pos]) {
+        if (res.contains(other)) continue;
+
+        Set<string> use2 = use;
+        Set<string> res2 = res;
+
+        res2.add(other);
+        use2.remove(other);
+        use2 -= roadNetwork[other];
+
+        if (dfs(roadNetwork, numCities, use2, res2, supplyLocations))
+            return true;
+    }
+
+    return false;
+}
+
+
 bool canBeMadeDisasterReady(const Map<string, Set<string>>& roadNetwork,
                             int numCities,
                             Set<string>& supplyLocations) {
     /* TODO: Delete the next few lines and implement this function. */
-    (void) roadNetwork;
-    (void) numCities;
-    (void) supplyLocations;
-    return false;
+    // (void) roadNetwork;
+    // (void) numCities;
+    // (void) supplyLocations;
+    // return false;
+    if (numCities < 0) {
+        error("The numCities is negative.");
+    }
+    Set<string> use;
+    for (string key : roadNetwork.keys()) {
+        use.add(key);
+    }
+    Set<string> res;
+    return dfs(roadNetwork, numCities, use, res, supplyLocations);
 }
 
 
