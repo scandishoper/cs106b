@@ -4,8 +4,46 @@ using namespace std;
 
 Vector<DataPoint> combine(const Vector<Vector<DataPoint>>& sequences) {
     /* TODO: Delete the next few lines and implement this. */
-    (void) sequences;
-    return {};
+    // (void) sequences;
+    // return {};
+    int k = sequences.size();
+    if (k == 0) {
+        return Vector<DataPoint>();
+    }
+    if (k == 1) {
+        return sequences[0];
+    }
+    int mid = k / 2;
+    Vector<Vector<DataPoint>> left, right;
+    for (int i = 0; i < mid; i++) {
+        left.add(sequences[i]);
+    }
+    for (int i = mid; i < k; i++) {
+        right.add(sequences[i]);
+    }
+    Vector<DataPoint> left_ans = combine(left);
+    Vector<DataPoint> right_ans = combine(right);
+    Vector<DataPoint> ans;
+    int i = 0, j = 0;
+    while (i < left_ans.size() && j < right_ans.size()) {
+        if (left_ans[i].weight < right_ans[j].weight) {
+            ans.add(left_ans[i]);
+            i++;
+        }
+        else {
+            ans.add(right_ans[j]);
+            j++;
+        }
+    }
+    while (i < left_ans.size()) {
+        ans.add(left_ans[i]);
+        i++;
+    }
+    while (j < right_ans.size()) {
+        ans.add(right_ans[j]);
+        j++;
+    }
+    return ans;
 }
 
 
